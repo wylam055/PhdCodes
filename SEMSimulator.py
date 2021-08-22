@@ -90,7 +90,8 @@ def randomSEM(no_of_nodes, avg_deg, coefLow, coefHigh, sample_size, coefSymmetri
 ##############################################################################################################
 
 if __name__ == "__main__":
-    cg = randomSEM(no_of_nodes=4, avg_deg=2, coefLow=0.2, coefHigh=0.7, sample_size=100, coefSymmetric = True, randomizeOrder=True)
+    cg = randomSEM(no_of_nodes=4, avg_deg=2, coefLow=0.2, coefHigh=0.7, sample_size=100,
+                   coefSymmetric = True, randomizeOrder=True)
     print("The adjacency matrix:\n", cg.adjmat, "\n")
     print("The list of directed edges x -> y as (x, y):\n", cg.findFullyDirected(), "\n")
     print("The coefficient matrix:\n", cg.coef_mat, "\n")

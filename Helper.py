@@ -3,6 +3,7 @@ from copy import deepcopy
 from itertools import combinations, chain, permutations
 from math import sqrt, log
 from scipy.stats import norm, chi2
+from numpy import log as ln
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
@@ -148,7 +149,61 @@ def npIgnoreNan(ndarray):
 #######################################################################################################################
 # Graph-related functions
 #######################################################################################################################
-#
+
+def getParents(adjmat, i):
+    "Obtain the parents of node i in the adjacency matrix adjmat"
+    parents = [j for j in range(len(adjmat)) if adjmat[i, j] == 0 and adjmat[j, i] == 1]
+    parents.sort()
+    return tuple(parents)
+
+#######################################################################################################################
+
+def createBICDict(no_of_nodes):
+    """A dictionary is created for storing BIC scores. Note that this function should only be run a single time for
+    a dataset (irrespective to the number of DAGs that you are going to consider)"""
+    BIC_dict = {}
+    for i in range(no_of_nodes):
+        BIC_dict[i]={}
+    return BIC_dict
+
+#######################################################################################################################
+
+def BIC_graph(adjmat, BIC_dict, cov_matrix, sample_size, penalty=1):
+    """ Compute the Bayesian Information Criterion (BIC) score of a DAG (represented by its adjacency matrix adjmat)
+    from the covariance matrix cov_matrix. BIC_dict has to be initialized first for computation of the BIC of each node.
+    :param adjmat: adjacency matrix (numpy 2darray)
+    :param BIC_dict: dictionary needed to be initialized first by createBICDict
+    :param cov_matrix: covariance matrix from the data (numpy 2darray)
+    :param sample_size: sample size of the data (int)
+    :param penalty: penalty discount (int)
+    :return: BIC score the DAG (float)
+    """
+    score = 0
+
+    def BIC_node(adjmat, Y, BIC_dict, cov_matrix, sample_size, penalty):
+        "Obtain the BIC of the node Y and update the BIC_dict accordingly"
+        parents = getParents(adjmat, Y)
+        if parents in BIC_dict[Y].keys():
+            return BIC_dict[Y][parents]
+        else:
+            cov_XX = cov_matrix[np.ix_(parents, parents)]
+            cov_XY = cov_matrix[np.ix_(parents, (Y,))]
+            cov = cov_matrix[np.ix_((Y,) + parents, (Y,) + parents)]
+            b = np.matmul(np.linalg.inv(cov_XX), cov_XY)
+            b_star = np.concatenate((np.array([[1]]), -b))
+            var_rY = float(np.matmul(np.matmul(b_star.transpose(), cov), b_star))
+            k = len(parents)
+            lambda_term = penalty * ln(sample_size)
+            BIC = (-sample_size * ln(var_rY)) - (k * lambda_term)
+            BIC_dict[Y][parents] = BIC
+            return BIC
+
+    for Y in range(len(adjmat)):
+        score += BIC_node(adjmat, Y, BIC_dict, cov_matrix, sample_size, penalty)
+    return score
+
+#######################################################################################################################
+
 # def neighbors(adjmat, i):
 #     "Find the neighbors of node i in the adjacency matrix adjmat (np.ndarray)"
 #     l0 = np.where(adjmat[i, :] == 0)[0]

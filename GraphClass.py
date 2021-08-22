@@ -11,6 +11,7 @@ from Helper import listIntersection, listMinus, listUnion, powerset, fisherZ, ch
 
 class CausalGraph:
     def __init__(self, no_of_var):
+        self.variables = list(range(no_of_var))
         self.adjmat = np.full((no_of_var, no_of_var), -1)  # store the adjacency matrix (initialized as empty graph)
         np.fill_diagonal(self.adjmat, -99)
         self.data = None  # store the data
@@ -23,7 +24,7 @@ class CausalGraph:
         self.sample_size = 0 # store the sample size
         self.sepset = np.empty((no_of_var, no_of_var), object)  # store the collection of sepsets
         self.redundant_nodes = []  # store the list of redundant nodes (for subgraphs)
-        self.score = 0 # store the score (e.g., BIC)
+        self.BIC_score = 0 # store the BIC score
 
     ####################################################################################################################
 
