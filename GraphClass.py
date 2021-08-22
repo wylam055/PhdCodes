@@ -522,7 +522,6 @@ class CausalGraph:
         print("Number of directed edges:", len(self.findFullyDirected()))
         print("Number of undirected edges:", int(len(self.findUndirected()) / 2))
         print("Number of bi-directed edges:", int(len(self.findBiDirected()) / 2))
-        print("PC elapsed time (in seconds):", round(self.PC_elapsed, 3), "\n")
 
     ####################################################################################################################
 
@@ -731,7 +730,7 @@ def tetradToCausalGraph(path):
 #######################################################################################################################
 
 def toPattern(cg, checkDAG = True):
-    """Convert cg (a Causal Graph object) to its pattern [Throw an error if cg.nx_graph is not a DAG]"""
+    """Convert cg (a Causal Graph object) to its pattern"""
     if checkDAG:
         assert cg.isDag()
     cg_pattern = deepcopy(cg)
@@ -768,7 +767,6 @@ def toPattern(cg, checkDAG = True):
     cg_pattern.toNxSkeleton()
 
     return cg_pattern
-
 
 #######################################################################################################################
 
