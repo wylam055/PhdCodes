@@ -17,4 +17,4 @@ print(cg.findFullyDirected())
 print(cg.coef_mat)
 #######################################################################################################################
 
-# np.savetxt("test_return_data.csv", cg.data, delimiter=",")
+np.savetxt("temp/test_return_data.csv", cg.data, delimiter=",")
