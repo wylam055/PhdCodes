@@ -12,6 +12,7 @@ from copy import deepcopy
 #######################################################################################################################
 
 def causalOrder(no_of_nodes):
+    # Let m = no_of_nodes. This function returns m! permutations one by one.
     for order in permutations(range(no_of_nodes), no_of_nodes):
         yield order
 
