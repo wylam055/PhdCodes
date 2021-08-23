@@ -1,7 +1,7 @@
 #######################################################################################################################
 from Tester_Markov import CMCTester
 from Tester_Faithfulness import faithfulnessTester
-from Tester_SGS_Pminimality_frugality_perm_based import sgsPMinimalityFrugalityTester
+from Tester_Perm_based_razors import permutationBasedRazorsTester
 from SEMSimulator import randomSEM
 import numpy as np
 import time
@@ -32,8 +32,8 @@ def razorsTester(cg, test_name, alpha):
         end1 = time.time()
         return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, round(end1 - start, 2)]
     else:
-        [SGS, Pm, Fr, uFr, CI_facts, CD_facts] = sgsPMinimalityFrugalityTester(cg, test_name, alpha,
-                                                                               CMC_result = [CMC, I_G_star])
+        [SGS, Pm, Fr, uFr, CI_facts, CD_facts] = permutationBasedRazorsTester(cg, test_name, alpha,
+                                                                              CMC_result = [CMC, I_G_star])
         [CFC, resF, adjF, oriF, triF] = faithfulnessTester(cg, test_name, alpha, CMC_result = [CMC, I_G_star],
                                                            CI_facts=CI_facts, CD_facts=CD_facts)
         end2 = time.time()

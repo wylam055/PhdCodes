@@ -18,7 +18,7 @@ def causalOrder(no_of_nodes):
 
 #######################################################################################################################
 
-def sgsPMinimalityFrugalityTester(cg, test_name, alpha, **kwargs):
+def permutationBasedRazorsTester(cg, test_name, alpha, **kwargs):
     """Test Pearl Minimality, frugality, and unique frugality
     :param cg: CausalGraph object
     :param test_name: name of the independence test being used (string)
@@ -170,7 +170,7 @@ if __name__ == "__main__":
         cg = randomSEM(no_of_nodes=no_of_nodes, avg_deg=avg_deg, coefLow=coefLow, coefHigh=coefHigh,
                        sample_size=sample_size, coefSymmetric = True, randomizeOrder = True)
         CMC, I_G_star = CMCTester(cg, testName, alpha)
-        [SGS, Pm, Fr, uFr, CI_facts, CD_facts] = sgsPMinimalityFrugalityTester(cg, testName, alpha, CMC_result = [CMC, I_G_star])
+        [SGS, Pm, Fr, uFr, CI_facts, CD_facts] = permutationBasedRazorsTester(cg, testName, alpha, CMC_result = [CMC, I_G_star])
         CMC_sym = '\u2713' if CMC else 'x'
         SGS_sym = '\u2713' if SGS else 'x'
         Pm_sym = '\u2713' if Pm else 'x'
