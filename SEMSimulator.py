@@ -4,6 +4,7 @@ from itertools import combinations
 import random
 import numpy as np
 from copy import deepcopy
+from Helper import createBICDict, BIC_graph
 ##############################################################################################################
 
 def nCr(n,r):
@@ -61,11 +62,10 @@ def randomSEM(no_of_nodes, avg_deg, coefLow, coefHigh, sample_size, coefSymmetri
         else:
             parents = [j for (j, k) in list_of_edges if i == k]
             for parent in parents:
+                coef = round(random.uniform(coefLow, coefHigh), 4)
                 if coefSymmetric:
-                    coef = random.choice([random.uniform(coefLow, coefHigh), random.uniform(-coefHigh, -coefLow)])
-                else:
-                    coef = random.uniform(coefLow, coefHigh)
-                coef = round(coef, 4)
+                    sign = 1 if random.random() < 0.5 else -1
+                    coef = coef * sign
                 coefMatrix[i, parent] = coef
                 Xi += coef * model[parent]
             model.append(Xi)
@@ -93,9 +93,22 @@ def randomSEM(no_of_nodes, avg_deg, coefLow, coefHigh, sample_size, coefSymmetri
 ##############################################################################################################
 
 if __name__ == "__main__":
-    cg = randomSEM(no_of_nodes=4, avg_deg=2, coefLow=0.2, coefHigh=0.7, sample_size=100,
-                   coefSymmetric = True, randomizeOrder=True)
-    print("The adjacency matrix:\n", cg.adjmat, "\n")
-    print("The list of directed edges x -> y as (x, y):\n", cg.findFullyDirected(), "\n")
-    print("The coefficient matrix:\n", cg.coef_mat, "\n")
-    print("The dataset:\n", cg.data, "\n")
+    ##########################
+    ### Simulation setting ###
+    ##########################
+    no_of_nodes = 4
+    avg_deg = 2
+    coefLow = 0.2
+    coefHigh = 0.7
+    sample_size = 100
+    cg = randomSEM(no_of_nodes=no_of_nodes, avg_deg=avg_deg, coefLow=coefLow, coefHigh=coefHigh,
+               sample_size=sample_size, coefSymmetric = True, randomizeOrder = True)
+    print("Adjacency matrix:\n", cg.adjmat, "\n")
+    print("List of directed edges [where x -> y represented as (x, y)]:\n", cg.findFullyDirected(), "\n")
+    print("Coefficient matrix:\n", cg.coef_mat, "\n")
+    BIC_dict = createBICDict(no_of_nodes)
+    cg.cov_mat = np.cov(cg.data, rowvar=False)
+    BIC = BIC_graph(cg.adjmat, BIC_dict, cg.cov_mat, sample_size, penalty=1)
+    print(f"BIC score: {BIC}")
+    # np.savetxt("temp/test_data_" + str(no_of_nodes) + "_" + str(avg_deg) +"_" + str(sample_size) +
+    #            ".csv", cg.data, delimiter=",")

@@ -19,7 +19,6 @@ def faithfulnessTester(cg, test_name, alpha, **kwargs):
     4. ori_faithful: True if ori-faithfulness is satisfied, and False otherwise
     5. tri_faithful: True if tri-faithfulness is satisfied, and False otherwise
     """
-    cg = cg
     cg.setTestName(test_name)
     cg.corr_mat = np.corrcoef(cg.data, rowvar=False) if test_name == "Fisher_Z" else []
 
@@ -27,10 +26,10 @@ def faithfulnessTester(cg, test_name, alpha, **kwargs):
         CMC = kwargs["CMC_result"][0]
         I_G_star = kwargs["CMC_result"][1]
     else:
-        CMC, I_G_star = CMCTester(cg, test_name, alpha)
+        [CMC, I_G_star] = CMCTester(cg, test_name, alpha)
 
     if not CMC:
-        return False, False, False, False, False
+        return [False, False, False, False, False]
     else:
         CI_facts = kwargs["CI_facts"] + I_G_star if "CI_facts" in kwargs else deepcopy(I_G_star)
         CD_facts = kwargs["CD_facts"] if "CD_facts" in kwargs else []
@@ -139,7 +138,7 @@ def faithfulnessTester(cg, test_name, alpha, **kwargs):
                                 CFC = False
 
     res_faithful = adj_faithful and ori_faithful
-    return CFC, res_faithful, adj_faithful, ori_faithful, tri_faithful
+    return [CFC, res_faithful, adj_faithful, ori_faithful, tri_faithful]
 
 #######################################################################################################################
 
@@ -169,20 +168,20 @@ if __name__ == "__main__":
         cg = randomSEM(no_of_nodes=no_of_nodes, avg_deg=avg_deg, coefLow=coefLow, coefHigh=coefHigh,
                        sample_size=sample_size, coefSymmetric = True, randomizeOrder = True)
         CMC, I_G_star = CMCTester(cg, testName, alpha)
-        CFC, resF, adjF, oriF, triF = faithfulnessTester(cg, testName, alpha, CMC_result = [CMC, I_G_star])
-        CMC_sym = '\u2713' if CFC else 'x'
+        [CFC, resF, adjF, oriF, triF] = faithfulnessTester(cg, testName, alpha, CMC_result = [CMC, I_G_star])
+        CMC_sym = '\u2713' if CMC else 'x'
         CFC_sym = '\u2713' if CFC else 'x'
-        resF_sym = '\u2713' if CFC else 'x'
-        adjF_sym = '\u2713' if CFC else 'x'
-        oriF_sym = '\u2713' if CFC else 'x'
-        triF_sym = '\u2713' if CFC else 'x'
+        resF_sym = '\u2713' if resF else 'x'
+        adjF_sym = '\u2713' if adjF else 'x'
+        oriF_sym = '\u2713' if oriF else 'x'
+        triF_sym = '\u2713' if triF else 'x'
         CMC_sum += CMC
         CFC_sum += CFC
         resF_sum += resF
         adjF_sum += adjF
         oriF_sum += oriF
         triF_sum += triF
-        print(f"Run {i+1}: CMC {CMC_sym}; CFC {CFC_sym}; ResF {resF_sym}; AdjF {adjF_sym}; OriF {oriF_sym}; TriF {triF_sym}")
+        print(f"Run {i+1}: CMC {CMC_sym}, CFC {CFC_sym}, ResF {resF_sym}, AdjF {adjF_sym}, OriF {oriF_sym}, TriF {triF_sym}")
     print("\n")
     print(f"CMC is satisfied in {CMC_sum} out of {number_of_runs} runs.")
     print(f"CFC is satisfied in {CFC_sum} out of {number_of_runs} runs.")

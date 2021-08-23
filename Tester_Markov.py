@@ -27,10 +27,9 @@ def CMCTester(cg, test_name, alpha):
     :param test_name: name of the independence test being used (string)
     :param alpha: desired significance level in (0, 1) (float)
     :return:
-    1. True if CMC is satisfied and, False otherwise
+    1. CMC: True if CMC is satisfied, and False otherwise
     2. I_G_star: I(G*) if CMC is true, else []
     """
-    cg = cg
     cg.setTestName(test_name)
     cg.corr_mat = np.corrcoef(cg.data, rowvar=False) if test_name == "Fisher_Z" else []
 
@@ -47,9 +46,9 @@ def CMCTester(cg, test_name, alpha):
             break
 
     if CMC:
-        return True, I_G_star
+        return [True, I_G_star]
     else:
-        return False, []
+        return [False, []]
 
 #######################################################################################################################
 
@@ -73,7 +72,7 @@ if __name__ == "__main__":
     for i in range(number_of_runs):
         cg = randomSEM(no_of_nodes=no_of_nodes, avg_deg=avg_deg, coefLow=coefLow, coefHigh=coefHigh,
                        sample_size=sample_size, coefSymmetric = True, randomizeOrder = True)
-        CMC, I_G_star = CMCTester(cg, testName, alpha)
+        [CMC, I_G_star] = CMCTester(cg, testName, alpha)
         sym = '\u2713' if CMC else 'x'
         print(f"Run {i+1}: CMC {sym}")
         CMC_sum += CMC
