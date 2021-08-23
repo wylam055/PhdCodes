@@ -147,8 +147,6 @@ def npIgnoreNan(ndarray):
     return Output
 
 #######################################################################################################################
-# Graph-related functions
-#######################################################################################################################
 
 def getParents(adjmat, i):
     "Obtain the parents of node i in the adjacency matrix adjmat"
@@ -178,8 +176,6 @@ def BIC_graph(adjmat, BIC_dict, cov_matrix, sample_size, penalty=1):
     :param penalty: penalty discount (int)
     :return: BIC score the DAG (float)
     """
-    score = 0
-
     def BIC_node(adjmat, Y, BIC_dict, cov_matrix, sample_size, penalty):
         "Obtain the BIC of the node Y and update the BIC_dict accordingly"
         parents = getParents(adjmat, Y)
@@ -195,227 +191,13 @@ def BIC_graph(adjmat, BIC_dict, cov_matrix, sample_size, penalty=1):
             k = len(parents)
             lambda_term = penalty * ln(sample_size)
             BIC = (-sample_size * ln(var_rY)) - (k * lambda_term) + 1
+            # The +1 above is unnecessary but it coincides the results in TETRAD.
             BIC_dict[Y][parents] = BIC
             return BIC
 
+    score = 0
     for Y in range(len(adjmat)):
         score += BIC_node(adjmat, Y, BIC_dict, cov_matrix, sample_size, penalty)
     return score
 
 #######################################################################################################################
-
-# def neighbors(adjmat, i):
-#     "Find the neighbors of node i in the adjacency matrix adjmat (np.ndarray)"
-#     l0 = np.where(adjmat[i, :] == 0)[0]
-#     l1 = np.where(adjmat[i, :] == 1)[0]
-#     return np.concatenate((l0, l1))
-#
-# #######################################################################################################################
-#
-# def findCircArrow(adjmat):
-#     "Return the list of i o-> j as (i, j) in the adjacency matrix adjmat (np.ndarray)"
-#     L = np.where(adjmat == 1)
-#     return list(zip(L[0], L[1]))
-#
-# #######################################################################################################################
-#
-# def findTail(adjmat):
-#     "Return the list of i --o j as (i, j) in the adjacency matrix adjmat (np.ndarray)"
-#     L = np.where(adjmat == 0)
-#     return list(zip(L[0], L[1]))
-#
-# #######################################################################################################################
-#
-# def findUndirected(adjmat):
-#     "Return the list of undirected edge i --- j as (i, j) in the adjacency matrix adjmat (np.ndarray)"
-#     return [(edge[0], edge[1]) for edge in findTail(adjmat) if adjmat[edge[1], edge[0]] == 0]
-#
-# #######################################################################################################################
-#
-# def findFullyDirected(adjmat):
-#     "Return the list of directed edges i --> j as (i, j) in the adjacency matrix adjmat (np.ndarray)"
-#     return [(edge[0], edge[1]) for edge in findCircArrow(adjmat) if adjmat[edge[1], edge[0]] == 0]
-#
-# #######################################################################################################################
-#
-# def findBiDirected(adjmat):
-#     "Return the list of directed edges i <-> j as (i, j) in the adjacency matrix adjmat (np.ndarray)"
-#     return [(edge[0], edge[1]) for edge in findCircArrow(adjmat) if adjmat[edge[1], edge[0]] == 1]
-#
-# #######################################################################################################################
-#
-# def findAdj(adjmat):
-#     "Return the list of adjacencies i --- j as (i, j) in the adjacency matrix adjmat (np.ndarray)"
-#     return list(findTail(adjmat) + findCircArrow(adjmat))
-#
-# #######################################################################################################################
-#
-# def isFullyDirected(adjmat, i, j):
-#     "Return True if i --> j holds in the adjacency matrix adjmat (np.ndarray) and False otherwise"
-#     return adjmat[i, j] == 1 and adjmat[j, i] == 0
-#
-# #######################################################################################################################
-#
-# def isUndirected(adjmat, i, j):
-#     "Return True if i --- j holds in the adjacency matrix adjmat (np.ndarray) and False otherwise"
-#     return adjmat[i, j] == 0 and adjmat[j, i] == 0
-#
-# #######################################################################################################################
-#
-# def isBiDirected(adjmat, i , j):
-#     "Return True if i <-> j holds in the adjacency matrix adjmat (np.ndarray) and False otherwise"
-#     return adjmat[i, j] == 1 and adjmat[j, i] == 1
-#
-# #######################################################################################################################
-#
-# def isAdj(adjmat, i, j):
-#     "Return True if i o-o j holds in the adjacency matrix adjmat (np.ndarray) and False otherwise"
-#     return isFullyDirected(adjmat, i, j) or isFullyDirected(adjmat, j, i) \
-#            or isUndirected(adjmat, i, j) or isBiDirected(adjmat, i, j)
-#
-# #######################################################################################################################
-#
-# def findUnshieldedTriples(adjmat):
-#     "Return the list of unshielded triples i o-o j o-o k as (i, j, k) from the adjacency matrix adjmat (np.ndarray)"
-#     return [(pair[0][0], pair[0][1], pair[1][1]) for pair in permutations(findAdj(adjmat), 2)
-#             if pair[0][1] == pair[1][0] and pair[0][0] != pair[1][1] and adjmat[pair[0][0], pair[1][1]] == -1]
-#
-# #######################################################################################################################
-#
-# def findTriangles(adjmat):
-#     "Return the list of non-ambiguous triangles i o-o j o-o k o-o i as (i, j, k) from the adjacency matrix adjmat (np.ndarray)"
-#     Adj = findAdj(adjmat)
-#     return [(pair[0][0], pair[0][1], pair[1][1]) for pair in permutations(Adj, 2)
-#             if pair[0][1] == pair[1][0] and pair[0][0] != pair[1][1] and (pair[0][0], pair[1][1]) in Adj]
-#
-# #######################################################################################################################
-#
-# def findKites(graph):
-#     "Return the list of non-ambiguous kites i o-o j o-o l o-o k o-o i o-o l (where j and k are non-adjacent)\
-#     as (i, j, k, l) from the adjacency matrix adjmat (np.ndarray)"
-#     return [(pair[0][0], pair[0][1], pair[1][1], pair[0][2]) for pair in permutations(findTriangles(graph), 2)
-#             if pair[0][0] == pair[1][0] and pair[0][2] == pair[1][2]
-#             and pair[0][1] < pair[1][1] and graph[pair[0][1], pair[1][1]] == -1]
-#
-# #######################################################################################################################
-#
-# def findAllConditioningSets(adjmat, x, y):
-#     "return the list of conditioning sets of the neighbors of x or y in the adjacency matrix adjmat (np.ndarray)"
-#     neigh_x = neighbors(adjmat, x)
-#     neigh_y = neighbors(adjmat, y)
-#     pow_neigh_x = powerset(neigh_x)
-#     pow_neigh_y = powerset(neigh_y)
-#     return listUnion(pow_neigh_x, pow_neigh_y)
-#
-# #######################################################################################################################
-#
-# def findConditioningSetsWithMiddle(adjmat, x, y, z):
-#     "return the list of conditioning sets of the neighbors of x or y which contains z in the adjacency matrix adjmat (np.ndarray)"
-#     return [S for S in findAllConditioningSets(adjmat, x, y) if z in S]
-#
-# #######################################################################################################################
-#
-# def findConditioningSetsWithoutMiddle(adjmat, x, y, z):
-#     "return the list of conditioning sets of the neighbors of x or y which does not contain z in the adjacency matrix adjmat (np.ndarray)"
-#     return [S for S in findAllConditioningSets(adjmat, x, y) if z not in S]
-#
-# #######################################################################################################################
-#
-# def findUC(adjmat):
-#     "Return the list of unshielded colliders x --> y <-- z as (x, y, z) in the adjacency matrix adjmat (np.ndarray)\
-#     with asymmetry x < z"
-#     directed = findFullyDirected(adjmat)
-#     return [(pair[0][0], pair[0][1], pair[1][0]) for pair in permutations(directed, 2)
-#             if pair[0][1] == pair[1][1] and pair[0][0] < pair[1][0] and adjmat[pair[0][0], pair[1][0]] == -1]
-#
-# #######################################################################################################################
-#
-# def rearrangeColumns(adjmat, PATH):
-#     "Rearrange the adjacency matrix adjmat (np.ndarray) according to the data imported at PATH"
-#     raw_col_names = list(pd.read_csv(PATH, sep='\t').columns)
-#     var_indices = []
-#     for name in raw_col_names:
-#         var_indices.append(int(name.split('X')[1]) - 1)
-#     new_indices = np.zeros_like(var_indices)
-#     for i in range(1, len(new_indices)):
-#         new_indices[var_indices[i]] = range(len(new_indices))[i]
-#     output = adjmat[:, new_indices]
-#     output = output[new_indices, :]
-#     return output
-#
-# #######################################################################################################################
-#
-# def dag2Pattern(adjmat):
-#     "Generate the pattern of the adjacency matrix adjmat (np.ndarray)"
-#     pattern = deepcopy(adjmat)
-#     pattern[pattern == 1] = 0  # Remove all the arrowheads from the DAG to obtain the skeleton
-#     UC = findUC(adjmat)
-#     for (i, j, k) in UC:
-#        pattern[i, j] = 1
-#        pattern[k, j] = 1
-#
-#     UT = findUnshieldedTriples(pattern)
-#     Tri = findTriangles(pattern)
-#     Kites = findKites(pattern)
-#
-#     Loop = True
-#     while Loop:
-#         Loop = False
-#         for (i, j, k) in UT:
-#             if isFullyDirected(pattern, i, j) and isUndirected(pattern, j, k):
-#                 pattern[j, k] = 1
-#                 Loop = True
-#
-#         for (i, j, k) in Tri:
-#             if isFullyDirected(pattern, i, j) and isFullyDirected(pattern, j, k) and isUndirected(pattern, i, k):
-#                 pattern[i, k] = 1
-#                 Loop = True
-#
-#         for (i, j, k, l) in Kites:
-#             if isUndirected(pattern, i, j) and isUndirected(pattern, i, k) and isFullyDirected(pattern, j, l) and isFullyDirected(pattern, k, l) \
-#                     and isUndirected(pattern, i, l):
-#                 pattern[i, l] = 1
-#                 Loop = True
-#
-#     return pattern
-#
-# #######################################################################################################################
-#
-# def adjmat2DiGraph(adjmat):
-#     "Recover the directed graph from the adjacency matrix adjmat (np.ndarray) and return a nx_graph object"
-#     g = nx.DiGraph()
-#     nodes = range(len(adjmat))
-#     g.add_nodes_from(nodes)
-#     undirected = findUndirected(adjmat)
-#     directed = findFullyDirected(adjmat)
-#     bidirected = findBiDirected(adjmat)
-#     for (i, j) in undirected:
-#         g.add_edge(i, j, color='g')  # Green edge: undirected edge
-#     for (i, j) in directed:
-#         g.add_edge(i, j, color='b')  # Blue edge: directed edge
-#     for (i, j) in bidirected:
-#         g.add_edge(i, j, color='r')  # Red edge: bidirected edge
-#     return g
-#
-# #######################################################################################################################
-#
-# def drawGraph(nx_graph):
-#     "Draw the nx_graph (networkx graph object)"
-#     print("Green: undirected; Blue: directed; Red: bi-directed")
-#     warnings.filterwarnings("ignore", category=UserWarning)
-#     edges = nx_graph.edges()
-#     colors = [nx_graph[u][v]['color'] for u, v in edges]
-#     pos = nx.circular_layout(nx_graph)
-#     nx.draw(nx_graph, pos = pos, with_labels = True, edge_color = colors)
-#     plt.draw()
-#     plt.show()
-#
-# #######################################################################################################################
-#
-# def isDSep(nx_graph, x, y, Z):
-#     "Return True if x and y are d-separated by the set Z in nx_graph (networkx graph object) and False otherwise"
-#     S = set([str(i) for i in Z])
-#     return nx.d_separated(nx_graph, {str(x)}, {str(y)}, S)
-#
-# #######################################################################################################################
-
