@@ -81,6 +81,9 @@ def randomSEM(no_of_nodes, avg_deg, coefLow, coefHigh, sample_size, coefSymmetri
         cg.coef_mat = fancy_indexing(cg.coef_mat, node_indices, columnsOnly=False)
     for (i, j) in add_edges:
         cg.addDirectedEdge(i, j)
+    cg.toNxGraph()
+    cg.toNxSkeleton()
+    cg.sample_size = sample_size
     return cg
 
 ##############################################################################################################
