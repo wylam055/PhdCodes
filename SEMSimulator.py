@@ -36,7 +36,8 @@ def randomForwardDAG(no_of_nodes, avg_deg):
 
 ##############################################################################################################
 
-def randomSEM(no_of_nodes, avg_deg, coefLow, coefHigh, sample_size, coefSymmetric = True, randomizeOrder = True):
+def randomSEM(no_of_nodes, avg_deg, coefLow, coefHigh, sample_size, coefSymmetric = True,
+              varLow = 1, varHigh = 3, randomizeOrder = True):
     """ Generate a CausalGraph object by a structural equation model
     :param no_of_nodes: number of nodes
     :param avg_deg: average degree of the DAG
@@ -44,6 +45,8 @@ def randomSEM(no_of_nodes, avg_deg, coefLow, coefHigh, sample_size, coefSymmetri
     :param coefHigh: upper end of linear coefficient
     :param sample_size: sample size of the generated data
     :param coefSymmetric: the linear coefficients are symmetric over zero (i.e., +-[coefLow, coefHigh]) if True
+    :param varLow: lower limit of the variance of the Gaussian noise term (default = 1)
+    :param varHigh: upper limit of the variance of the Gaussian noise term (default = 3)
     :param randomizeOrder: the order of the variables are randomized if True
     :return: a CausalGraph object cg
     """
@@ -55,7 +58,8 @@ def randomSEM(no_of_nodes, avg_deg, coefLow, coefHigh, sample_size, coefSymmetri
     model = []
 
     for i in range(no_of_nodes):
-        Xi = np.random.normal(0, 1, sample_size)
+        var_e = random.uniform(varLow, varHigh)
+        Xi = np.random.normal(0, var_e, sample_size)
         if i == 0:
             model.append(Xi)
             continue
@@ -96,11 +100,11 @@ if __name__ == "__main__":
     ##########################
     ### Simulation setting ###
     ##########################
-    no_of_nodes = 4
-    avg_deg = 2
+    no_of_nodes = 5
+    avg_deg = 1
     coefLow = 0.2
-    coefHigh = 0.7
-    sample_size = 100
+    coefHigh = 1.2
+    sample_size = 100000
     cg = randomSEM(no_of_nodes=no_of_nodes, avg_deg=avg_deg, coefLow=coefLow, coefHigh=coefHigh,
                sample_size=sample_size, coefSymmetric = True, randomizeOrder = True)
     print("Adjacency matrix:\n", cg.adjmat, "\n")
@@ -110,5 +114,7 @@ if __name__ == "__main__":
     cg.cov_mat = np.cov(cg.data, rowvar=False)
     BIC = BIC_graph(cg.adjmat, BIC_dict, cg.cov_mat, sample_size, penalty=1)
     print(f"BIC score: {BIC}")
-    # np.savetxt("temp/test_data_" + str(no_of_nodes) + "_" + str(avg_deg) +"_" + str(sample_size) +
-    #            ".csv", cg.data, delimiter=",")
+    np.savetxt("temp/test_data_" + str(no_of_nodes) + "_" + str(avg_deg) +"_" + str(sample_size) +
+               ".csv", cg.data, delimiter=",")
+
+##############################################################################################################

@@ -114,4 +114,5 @@ if __name__ == "__main__":
     print(f"CFC is satisfied in {CFC_sum} out of {number_of_runs} runs.")
     print(f"Total elapsed time (sec): {round(elapsed_sum,2)}")
     np.savetxt("temp/" + folderName + "_" + str(alpha) + ".csv", np.array(output), delimiter = ",", fmt="%s")
+
 ######################################################################################################################
