@@ -14,10 +14,10 @@ def faithfulnessTester(cg, test_name, alpha, **kwargs):
     :param alpha: desired significance level in (0, 1) (float)
     :return:
     1. CFC: True if CFC is satisfied, and False otherwise
-    2. res_faithful: True if res-faithfulness is satisfied, and False otherwise
-    3. adj_faithful: True if adj-faithfulness is satisfied, and False otherwise
-    4. ori_faithful: True if ori-faithfulness is satisfied, and False otherwise
-    5. tri_faithful: True if tri-faithfulness is satisfied, and False otherwise
+    2. resF: True if res-faithfulness is satisfied, and False otherwise
+    3. adjF: True if adj-faithfulness is satisfied, and False otherwise
+    4. oriF: True if ori-faithfulness is satisfied, and False otherwise
+    5. triF: True if tri-faithfulness is satisfied, and False otherwise
     """
     cg.setTestName(test_name)
     cg.corr_mat = np.corrcoef(cg.data, rowvar=False) if test_name == "Fisher_Z" else []
@@ -39,9 +39,9 @@ def faithfulnessTester(cg, test_name, alpha, **kwargs):
     UT = [(i, j, k) for (i, j, k) in cg.findUnshieldedTriples() if i < k]
     tri = [(i, j, k) for (i, j, k) in cg.findTriangles() if i < k]
     CFC = True
-    tri_faithful = True
-    adj_faithful = True
-    ori_faithful = True
+    triF = True
+    adjF = True
+    oriF = True
 
     for (i, j) in combinations(range_of_nodes, 2):
 
@@ -50,79 +50,79 @@ def faithfulnessTester(cg, test_name, alpha, **kwargs):
 
         # First, verify tri-faithfulness (weaker than adj-faithfulness):
         tri_ij = [(x, y, z) for (x, y, z) in tri if x == i and z == j]
-        if len(tri_ij) != 0 and tri_faithful:
+        if len(tri_ij) != 0 and triF:
             for (x, y, z) in tri_ij:
                 if cg.isCollider(x, y, z):
                     for S in [S_sets for S_sets in cond_sets if y in S_sets]:
                         if [i, j, S] in CI_facts:
-                            tri_faithful = False
-                            adj_faithful = False
+                            triF = False
+                            adjF = False
                             CFC = False
                         elif [i, j, S] in CD_facts:
                             continue
                         else:
                             p = cg.ci_test(i, j, S)
                             if p > alpha:
-                                tri_faithful = False
-                                adj_faithful = False
+                                triF = False
+                                adjF = False
                                 CFC = False
                 else:
                     for S in [S_sets for S_sets in cond_sets if y not in S_sets]:
                         if [i, j, S] in CI_facts:
-                            tri_faithful = False
-                            adj_faithful = False
+                            triF = False
+                            adjF = False
                             CFC = False
                         elif [i, j, S] in CD_facts:
                             continue
                         else:
                             p = cg.ci_test(i, j, S)
                             if p > alpha:
-                                tri_faithful = False
-                                adj_faithful = False
+                                triF = False
+                                adjF = False
                                 CFC = False
 
         # Second, verify adj-faithfulness
-        elif (i, j) in adj and adj_faithful:
+        elif (i, j) in adj and adjF:
             for S in cond_sets:
                 if [i, j, S] in CI_facts:
-                    adj_faithful = False
+                    adjF = False
                     CFC = False
                 elif [i, j, S] in CD_facts:
                     continue
                 else:
                     p = cg.ci_test(i, j, S)
                     if p > alpha:
-                        adj_faithful = False
+                        adjF = False
                         CFC = False
 
         else:
             # Third, verify ori-faithfulness
             UT_ij = [(x, y, z) for (x, y, z) in UT if x == i and z == j]
-            if len(UT_ij) != 0 and ori_faithful:
+            if len(UT_ij) != 0 and oriF:
                 for (x, y, z) in UT_ij:
                     if cg.isCollider(x, y, z):
                         for S in [S_sets for S_sets in cond_sets if y in S_sets]:
                             if [i, j, S] in CI_facts:
-                                ori_faithful = False
+                                oriF = False
                                 CFC = False
                             elif [i, j, S] in CD_facts:
                                 continue
                             else:
                                 p = cg.ci_test(i, j, S)
                                 if p > alpha:
-                                    ori_faithful = False
+                                    oriF = False
                                     CFC = False
                     else:
                         for S in [S_sets for S_sets in cond_sets if y not in S_sets]:
                             if [i, j, S] in CI_facts:
-                                ori_faithful = False
+                                oriF = False
                                 CFC = False
                             elif [i, j, S] in CD_facts:
                                 continue
                             else:
                                 p = cg.ci_test(i, j, S)
                                 if p > alpha:
-                                    ori_faithful = False
+                                    oriF = False
                                     CFC = False
 
             elif CFC:
@@ -137,8 +137,8 @@ def faithfulnessTester(cg, test_name, alpha, **kwargs):
                             if p > alpha:
                                 CFC = False
 
-    res_faithful = adj_faithful and ori_faithful
-    return [CFC, res_faithful, adj_faithful, ori_faithful, tri_faithful]
+    resF = adjF and oriF
+    return [CFC, resF, adjF, oriF, triF]
 
 #######################################################################################################################
 
