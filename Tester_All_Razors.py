@@ -48,7 +48,7 @@ if __name__ == "__main__":
     ##########################
     ### Simulation setting ###
     ##########################
-    no_of_nodes = 6
+    no_of_nodes = 4
     avg_deg = 2
     coefLow = 0.2
     coefHigh = 0.7
@@ -56,7 +56,8 @@ if __name__ == "__main__":
     number_of_runs = 50
     alpha = 0.01
     testName = "Fisher_Z"
-
+    folderName = f"{no_of_nodes}_{avg_deg}_{sample_size}_LG_{coefLow}_{coefHigh}"
+    print(f"Simulation setting: {folderName}\n")
     ######################
     ### Run simulation ###
     ######################
@@ -71,10 +72,12 @@ if __name__ == "__main__":
     oriF_sum = 0
     triF_sum = 0
     elapsed_sum = 0
+    output = []
     for i in range(number_of_runs):
         cg = randomSEM(no_of_nodes=no_of_nodes, avg_deg=avg_deg, coefLow=coefLow, coefHigh=coefHigh,
                        sample_size=sample_size, coefSymmetric = True, randomizeOrder = True)
         [CMC, SGS, Pm, Fr, uFr, adjF, oriF, triF, resF, CFC, elapsed] = razorsTester(cg, testName, alpha)
+        output.append([CMC, SGS, Pm, Fr, uFr, adjF, oriF, triF, resF, CFC, elapsed])
         CMC_sym = '\u2713' if CMC else 'x'
         CFC_sym = '\u2713' if CFC else 'x'
         resF_sym = '\u2713' if resF else 'x'
@@ -110,5 +113,5 @@ if __name__ == "__main__":
     print(f"Res-faithfulness is satisfied in {resF_sum} out of {number_of_runs} runs.")
     print(f"CFC is satisfied in {CFC_sum} out of {number_of_runs} runs.")
     print(f"Total elapsed time (sec): {round(elapsed_sum,2)}")
-
+    np.savetxt("temp/" + folderName + "_" + str(alpha) + ".csv", np.array(output), delimiter = ",", fmt="%s")
 ######################################################################################################################
