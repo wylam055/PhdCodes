@@ -110,4 +110,5 @@ if __name__ == "__main__":
     print(f"Res-faithfulness is satisfied in {resF_sum} out of {number_of_runs} runs.")
     print(f"CFC is satisfied in {CFC_sum} out of {number_of_runs} runs.")
     print(f"Total elapsed time (sec): {round(elapsed_sum,2)}")
+
 ######################################################################################################################
