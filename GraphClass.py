@@ -6,7 +6,7 @@ import pandas as pd
 import warnings
 from copy import deepcopy
 from itertools import permutations
-from Helper import listIntersection, listMinus, listUnion, powerset, fisherZ, chisq
+from Helper import listIntersection, listMinus, listUnion, powerset, fisherZ, chisq, createBICDict, BIC_graph
 #######################################################################################################################
 
 class CausalGraph:
@@ -14,17 +14,18 @@ class CausalGraph:
         self.variables = list(range(no_of_var))
         self.adjmat = np.full((no_of_var, no_of_var), -1)  # store the adjacency matrix (initialized as empty graph)
         np.fill_diagonal(self.adjmat, -99)
-        self.data = None  # store the data
-        self.coef_mat = None # store the coefficient matrix of the true model
+        self.data = []  # store the data
+        self.coef_mat = [] # store the coefficient matrix of the true model
         self.test = str()  # store the name of the conditional independence test
-        self.corr_mat = None  # store the correlation matrix of the data
-        self.cov_mat = None # store the covariance matrix of the data
+        self.corr_mat = []  # store the correlation matrix of the data
+        self.cov_mat = [] # store the covariance matrix of the data
         self.nx_graph = nx.DiGraph()  # store the directed graph
         self.nx_skel = nx.Graph()  # store the skeleton
         self.sample_size = 0 # store the sample size
         self.sepset = np.empty((no_of_var, no_of_var), object)  # store the collection of sepsets
         self.redundant_nodes = []  # store the list of redundant nodes (for subgraphs)
         self.BIC_score = 0 # store the BIC score
+        self.temp = None # anything temporary
 
     ####################################################################################################################
 
@@ -43,6 +44,18 @@ class CausalGraph:
             return chisq(self.data, i, j, S, G_sq=False)
         elif self.test == "G_sq":
             return chisq(self.data, i, j, S, G_sq=True)
+
+    ####################################################################################################################
+
+    def getCovMatrix(self):
+        assert len(self.data) > 0
+        self.cov_mat = np.cov(self.data, rowvar=False, ddof=0)
+
+    ####################################################################################################################
+
+    def getCorrMatrix(self):
+        assert len(self.data) > 0
+        self.corr_mat = np.corrcoef(self.data, rowvar=False)
 
     ####################################################################################################################
 
@@ -662,6 +675,15 @@ class CausalGraph:
 
         return stat_list
 
+#######################################################################################################################
+
+    def getBIC(self, penalty=1):
+        self.temp = createBICDict(len(self.variables))
+        if not len(self.cov_mat) > 1:
+            self.getCovMatrix()
+        return BIC_graph(self.adjmat, self.temp, self.cov_mat, self.sample_size, penalty=penalty)
+
+#######################################################################################################################
 
 #######################################################################################################################
 #######################################################################################################################

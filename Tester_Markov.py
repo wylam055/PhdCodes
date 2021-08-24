@@ -31,7 +31,7 @@ def CMCTester(cg, test_name, alpha):
     2. I_G_star: I(G*) if CMC is true, else []
     """
     cg.setTestName(test_name)
-    cg.corr_mat = np.corrcoef(cg.data, rowvar=False) if test_name == "Fisher_Z" else []
+    cg.getCorrMatrix() if test_name == "Fisher_Z" else []
 
     CMC = True
     I_G_star = []

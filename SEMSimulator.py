@@ -36,8 +36,8 @@ def randomForwardDAG(no_of_nodes, avg_deg):
 
 ##############################################################################################################
 
-def randomSEM(no_of_nodes, avg_deg, coefLow, coefHigh, sample_size, coefSymmetric = True,
-              varLow = 1, varHigh = 3, randomizeOrder = True):
+def randomSEM(no_of_nodes, avg_deg, coefLow, coefHigh, sample_size,
+              coefSymmetric=True, varLow=1, varHigh=3, randomizeOrder=True):
     """ Generate a CausalGraph object by a structural equation model
     :param no_of_nodes: number of nodes
     :param avg_deg: average degree of the DAG
@@ -45,8 +45,8 @@ def randomSEM(no_of_nodes, avg_deg, coefLow, coefHigh, sample_size, coefSymmetri
     :param coefHigh: upper end of linear coefficient
     :param sample_size: sample size of the generated data
     :param coefSymmetric: the linear coefficients are symmetric over zero (i.e., +-[coefLow, coefHigh]) if True
-    :param varLow: lower limit of the variance of the Gaussian noise term (default = 1)
-    :param varHigh: upper limit of the variance of the Gaussian noise term (default = 3)
+    :param varLow: lower limit of the variance of the Gaussian noise term
+    :param varHigh: upper limit of the variance of the Gaussian noise term
     :param randomizeOrder: the order of the variables are randomized if True
     :return: a CausalGraph object cg
     """
@@ -101,20 +101,20 @@ if __name__ == "__main__":
     ### Simulation setting ###
     ##########################
     no_of_nodes = 5
-    avg_deg = 1
+    avg_deg = 2
     coefLow = 0.2
     coefHigh = 1.2
     sample_size = 100000
     cg = randomSEM(no_of_nodes=no_of_nodes, avg_deg=avg_deg, coefLow=coefLow, coefHigh=coefHigh,
-               sample_size=sample_size, coefSymmetric = True, randomizeOrder = True)
-    print("Adjacency matrix:\n", cg.adjmat, "\n")
-    print("List of directed edges [where x -> y represented as (x, y)]:\n", cg.findFullyDirected(), "\n")
+               sample_size=sample_size, coefSymmetric=True, randomizeOrder=True)
+    print("Adjacency matrix")
+    print("(where [x,y]=1 & [y,x]=0 represent x→y; [x,y]=[y,x]=0 represent x-y); non-adjacency as -1)")
+    print(cg.adjmat, "\n")
+    print("List of directed edges (where (x,y) represents x→y):\n", cg.findFullyDirected(), "\n")
     print("Coefficient matrix:\n", cg.coef_mat, "\n")
-    BIC_dict = createBICDict(no_of_nodes)
-    cg.cov_mat = np.cov(cg.data, rowvar=False)
-    BIC = BIC_graph(cg.adjmat, BIC_dict, cg.cov_mat, sample_size, penalty=1)
+    BIC = cg.getBIC()
     print(f"BIC score: {BIC}")
-    np.savetxt("temp/test_data_" + str(no_of_nodes) + "_" + str(avg_deg) +"_" + str(sample_size) +
-               ".csv", cg.data, delimiter=",")
+    # np.savetxt("temp/test_data_" + str(no_of_nodes) + "_" + str(avg_deg) +"_" + str(sample_size) +
+    #            ".csv", cg.data, delimiter=",")
 
 ##############################################################################################################

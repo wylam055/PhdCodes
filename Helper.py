@@ -190,8 +190,7 @@ def BIC_graph(adjmat, BIC_dict, cov_matrix, sample_size, penalty=1):
             var_rY = float(np.matmul(np.matmul(b_star.transpose(), cov), b_star))
             k = len(parents)
             lambda_term = penalty * ln(sample_size)
-            BIC = (-sample_size * ln(var_rY)) - (k * lambda_term) + 1
-            # The +1 above is unnecessary but it coincides the results in TETRAD.
+            BIC = (-sample_size * ln(var_rY)) - (k * lambda_term)
             BIC_dict[Y][parents] = BIC
             return BIC
 

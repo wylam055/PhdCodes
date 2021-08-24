@@ -20,7 +20,7 @@ def causalOrder(no_of_nodes):
 
 def exhaustPermutations(cg, test_name, alpha):
     cg.setTestName(test_name)
-    cg.corr_mat = np.corrcoef(cg.data, rowvar=False) if test_name == "Fisher_Z" else []
+    cg.getCorrMatrix() if test_name == "Fisher_Z" else []
 
     permutationsDict = {}
     [CMC, I_G_star] = CMCTester(cg, test_name, alpha)

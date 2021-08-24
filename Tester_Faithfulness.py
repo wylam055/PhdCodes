@@ -20,7 +20,7 @@ def faithfulnessTester(cg, test_name, alpha, **kwargs):
     5. triF: True if tri-faithfulness is satisfied, and False otherwise
     """
     cg.setTestName(test_name)
-    cg.corr_mat = np.corrcoef(cg.data, rowvar=False) if test_name == "Fisher_Z" else []
+    cg.getCorrMatrix() if test_name == "Fisher_Z" else []
 
     if "CMC_result" in kwargs:
         CMC = kwargs["CMC_result"][0]
