@@ -5,7 +5,7 @@ from itertools import permutations
 import numpy as np
 import networkx as nx
 from itertools import combinations
-from SEMSimulator import randomSEM
+from SEMSimulatorRandom import randomSEM
 from copy import deepcopy
 #######################################################################################################################
 

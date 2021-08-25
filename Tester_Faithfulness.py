@@ -3,7 +3,7 @@ from itertools import combinations
 from Tester_Markov import CMCTester
 from Helper import powerset, listMinus
 from copy import deepcopy
-from SEMSimulator import randomSEM
+from SEMSimulatorRandom import randomSEM
 import numpy as np
 #######################################################################################################################
 

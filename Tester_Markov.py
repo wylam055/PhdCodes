@@ -2,7 +2,7 @@
 from itertools import combinations
 from Helper import powerset, listMinus
 from networkx import d_separated
-from SEMSimulator import randomSEM
+from SEMSimulatorRandom import randomSEM
 import numpy as np
 #######################################################################################################################
 

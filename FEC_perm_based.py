@@ -1,7 +1,7 @@
 #######################################################################################################################
 from GraphClass import toPattern, CausalGraph
 from itertools import permutations
-from SEMSimulator import randomSEM
+from SEMSimulatorRandom import randomSEM
 import numpy as np
 from itertools import combinations
 from Tester_Markov import CMCTester

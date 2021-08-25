@@ -2,7 +2,7 @@
 from Tester_Markov import CMCTester
 from Tester_Faithfulness import faithfulnessTester
 from Tester_Perm_based_razors import permutationBasedRazorsTester
-from SEMSimulator import randomSEM
+from SEMSimulatorRandom import randomSEM
 import numpy as np
 import time
 #######################################################################################################################
