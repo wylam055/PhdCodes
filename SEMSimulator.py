@@ -2,6 +2,8 @@ from GraphClass import CausalGraph
 import random
 import numpy as np
 import networkx as nx
+
+
 ##############################################################################################################
 
 def SEM(coef_mat, sample_size, varLow=1, varHigh=3):
@@ -50,6 +52,7 @@ def SEM(coef_mat, sample_size, varLow=1, varHigh=3):
     cg.sample_size = sample_size
     return cg
 
+
 ##############################################################################################################
 
 ##############################################################################################################
@@ -60,10 +63,10 @@ if __name__ == "__main__":
     ##########################
     ### Simulation setting ###
     ##########################
-    coef_mat =  [[0, 0.7, 0, 1.1],
-             [0, 0, 0, 0],
-             [0, 0, 0, -0.8],
-             [0, 0, 0, 0]]
+    coef_mat = [[0, 0.7, 0, 1.1],
+                [0, 0, 0, 0],
+                [0, 0, 0, -0.8],
+                [0, 0, 0, 0]]
     sample_size = 100000
     cg = SEM(coef_mat, 1000000)
     print("Adjacency matrix")
