@@ -1,18 +1,16 @@
+#######################################################################################################################
 from GraphClass import CausalGraph
 import math
 from itertools import combinations
 import random
 import numpy as np
 from copy import deepcopy
-
-
 ##############################################################################################################
 
 def nCr(n, r):
     # Compute the standard (n choose r) operation
     f = math.factorial
     return int(f(n) / f(r) / f(n - r))
-
 
 ##############################################################################################################
 
@@ -26,7 +24,6 @@ def fancy_indexing(np_array, indices, columnsOnly=True):
         new_array = new_array[idx, :]
     return new_array
 
-
 ##############################################################################################################
 
 def randomForwardDAG(no_of_nodes, avg_deg):
@@ -36,7 +33,6 @@ def randomForwardDAG(no_of_nodes, avg_deg):
     range_of_nodes = range(no_of_nodes)
     possible_edges = list(combinations(range_of_nodes, 2))
     return random.sample(possible_edges, total_no_of_edges)
-
 
 ##############################################################################################################
 
@@ -93,7 +89,6 @@ def randomSEM(no_of_nodes, avg_deg, coefLow, coefHigh, sample_size,
     cg.toNxSkeleton()
     cg.sample_size = sample_size
     return cg
-
 
 ##############################################################################################################
 

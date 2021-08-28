@@ -1,9 +1,8 @@
+#######################################################################################################################
 from GraphClass import CausalGraph
 import random
 import numpy as np
 import networkx as nx
-
-
 ##############################################################################################################
 
 def SEM(coef_mat, sample_size, varLow=1, varHigh=3):
